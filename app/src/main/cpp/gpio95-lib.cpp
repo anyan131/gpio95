@@ -53,15 +53,8 @@ static speed_t getBaudrate(jint baudrate)
     }
 }
 
-extern "C" JNIEXPORT jstring JNICALL
-Java_com_example_newgpio95_MainActivity_stringFromJNI(
-        JNIEnv* env,
-        jobject /* this */) {
-    return env->NewStringUTF("Hello from C++");
-}
 
-
-extern "C" JNIEXPORT jobject JNICALL Java_com_example_newgpio95_MainActivity_open
+extern "C" JNIEXPORT jobject JNICALL Java_com_example_newgpio95_GPIO95_open
         (JNIEnv *env, jobject thiz, jstring path, jint baudrate, jint flags)
 {
     int fd;
@@ -138,8 +131,8 @@ extern "C" JNIEXPORT jobject JNICALL Java_com_example_newgpio95_MainActivity_ope
  * Method:    close
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_com_example_newgpio95_MainActivity_close
-        (JNIEnv *env, jobject thiz)
+JNIEXPORT void JNICALL Java_com_example_newgpio95_GPIO95_close
+(JNIEnv *env, jobject thiz)
 {
 jclass SerialPortClass = (*env).GetObjectClass(thiz);
 jclass FileDescriptorClass = (*env).FindClass( "java/io/FileDescriptor");

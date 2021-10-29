@@ -1,0 +1,2 @@
+rootProject.name = "NewGpio95"
+include ':app'

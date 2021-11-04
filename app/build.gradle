@@ -22,8 +22,13 @@ android {
         }
         ndk {
             moduleName "src/main/cpp/CMakeLists.txt"
-            abiFilters "arm64-v8a","armeabi-v7a"
+            abiFilters "arm64-v8a"
         }
+    }
+
+
+    packagingOptions {
+        exclude 'lib/arm64-v8a/libgpio95-lib.so'
     }
 
     buildTypes {

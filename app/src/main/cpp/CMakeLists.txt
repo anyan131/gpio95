@@ -14,14 +14,9 @@ project("newgpio95")
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
 
-# 这一句用来导出编译生成的so库
-#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY D:/BaiduNetdiskDownload/NewGpio95/app/jniLibs/armeabi-v7a)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY D:/BaiduNetdiskDownload/NewGpio95/app/jniLibs/${ANDROID_ABI})
-
-include_directories(src/main/cpp)
-
-file(GLOB CPP_FILES "src/main/cpp/*.cpp")
-
+# 导出编译生成的so库
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY D:/BaiduNetdiskDownload/NewGpio95/app/jniLibs/arm64-v8a)
+#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY D:/BaiduNetdiskDownload/NewGpio95/app/jniLibs/{ANDROID_ABI})
 
 include_directories(src/main/cpp)
 

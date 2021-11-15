@@ -15,6 +15,23 @@ static const char *TAG = "serial_port";
 #define LOGD(fmt, args...) __android_log_print(ANDROID_LOG_DEBUG, TAG, fmt, ##args)
 #define LOGE(fmt, args...) __android_log_print(ANDROID_LOG_ERROR, TAG, fmt, ##args)
 
+#define RS2251_A 80
+#define RS2251_B 79
+#define RS2251_C 78
+#define  MYfile_NAME  "/dev/myGPIO"
+#define  Phone_ONOFFIO  3
+#define  Phone_CALL 94
+//#define  Phone_Hl 95
+#define  RED_ONOFF 5
+#define  GPS_ONOFF 95
+#define MYfile_UART "/dev/ttyMT2"
+#define SERIAL_REC_NUM 4
+// VTIME and VMIN is very important.
+// VTIME: Time to wait for data (tenths of seconds)等待数据的时间（十分之几秒）
+#define SERIAL_VTIME 1
+// VMIN: Minimum number of characters to read 要读取的最小字符数
+#define SERIAL_VMIN SERIAL_REC_NUM
+
 static speed_t getBaudrate(jint baudrate) {
     switch (baudrate) {
         case 0:
@@ -85,7 +102,7 @@ static speed_t getBaudrate(jint baudrate) {
 }
 
 
-extern "C" JNIEXPORT jobject JNICALL Java_com_example_newgpio95_GPIO95_open
+extern "C" JNIEXPORT jobject JNICALL Java_com_example_utils_ShbUtils_open
         (JNIEnv *env, jobject thiz, jstring path, jint baudrate, jint flags) {
     int fd;
     speed_t speed;
@@ -158,7 +175,7 @@ extern "C" JNIEXPORT jobject JNICALL Java_com_example_newgpio95_GPIO95_open
  * Method:    close
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_com_example_newgpio95_GPIO95_close
+extern "C" JNIEXPORT void JNICALL Java_com_example_utils_ShbUtils_close
         (JNIEnv *env, jobject thiz) {
     jclass SerialPortClass = (*env).GetObjectClass(thiz);
     jclass FileDescriptorClass = (*env).FindClass("java/io/FileDescriptor");
@@ -172,4 +189,47 @@ JNIEXPORT void JNICALL Java_com_example_newgpio95_GPIO95_close
 
     LOGD("close(fd = %d)", descriptor);
     close(descriptor);
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_example_utils_ShbUtils_openKvIo(JNIEnv *env, jobject thiz, jint port, jint flag) {
+    int fd;
+    fd = open(MYfile_NAME, O_RDWR | O_NOCTTY | O_NONBLOCK);
+    if(fd < 0)
+        ("Can't open /dev/leds!\n");
+    switch(flag)
+    {
+        //X0 0
+        case 0: ioctl(fd,RS2251_A,0);  ioctl(fd,RS2251_B,0);   ioctl(fd,RS2251_C,0);  break;
+            //X1 68k  220V的报警距离为：2.8m～3.2m
+        case 1: ioctl(fd,RS2251_A,1);  ioctl(fd,RS2251_B,0);   ioctl(fd,RS2251_C,0);  break;
+            //X2 336k  10kV的报警距离为：2.2m～2.8m
+        case 2: ioctl(fd,RS2251_A,0);  ioctl(fd,RS2251_B,1);   ioctl(fd,RS2251_C,0);  break;
+            //X3 470k 35kV的报警距离为：2.5m～3.5m
+        case 3: ioctl(fd,RS2251_A,1);  ioctl(fd,RS2251_B,1);   ioctl(fd,RS2251_C,0);  break;
+            //X4 680K  110kV的报警距离为：4.0m～6.0m
+        case 4: ioctl(fd,RS2251_A,0);  ioctl(fd,RS2251_B,0);   ioctl(fd,RS2251_C,1);  break;
+            //X5 820K  220kV的报警距离为：5.0m～9.0m
+        case 5: ioctl(fd,RS2251_A,1);  ioctl(fd,RS2251_B,0);   ioctl(fd,RS2251_C,1);  break;
+            //X6
+        case 6: ioctl(fd,RS2251_A,1);  ioctl(fd,RS2251_B,1);   ioctl(fd,RS2251_C,1);  break;
+        default:
+            break;
+    }
+
+    close(fd);
+    return 1;
+}
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_example_utils_ShbUtils_openNormalIo(JNIEnv *env, jobject thiz, jint port, jint flag) {
+    int fd;
+    fd = open(MYfile_NAME, O_RDWR | O_NOCTTY | O_NONBLOCK);
+
+    ioctl(fd,port,flag);
+    LOGI("Phone_ONOFFIO =%d",flag);
+    close(fd);
+
+    return 1;
 }
